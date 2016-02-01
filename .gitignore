@@ -1,0 +1,4 @@
+.dir-locals.el
+.lock-waf*
+*.pyc
+build/
