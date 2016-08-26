@@ -1,0 +1,15 @@
+#+startup: showeverything
+
+* ReadMe
+
+** Buldind Instruction
+
+To build the project run from your shell:
+
+#+BEGIN_SRC: sh
+  waf configure
+  waf buid
+#+END_SRC
+
+** Usage
+

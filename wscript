@@ -24,6 +24,10 @@ def configure(conf):
   conf.load('waf_unit_test')
   conf.check(lib='gtest', uselib_store='GTEST')
 
+  # gperftools
+  conf.check(lib='tcmalloc', uselib_store='tcmalloc')
+  conf.check(lib='profiler', uselib_store='profiler')
+
 
 def gtest_results(bld):
   from waflib import Logs
