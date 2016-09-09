@@ -6,43 +6,23 @@
 
 The first you need to build the development container.
 
-#+BEGIN_SRC sh :results output
+#+BEGIN_SRC sh
 docker build --rm -q -t graph-algorithms .
 #+END_SRC
 
-#+RESULTS:
-: sha256:d05b93d083d0b31dda475c67ca449640c5fa95968e9ee90a2787cf53f5a7449d
-
 To run the container:
-#+BEGIN_SRC sh :results output
+#+BEGIN_SRC sh
 docker run -d -v $(pwd):/home/user/graph-algorithms:Z -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 4022:22 graph-algorithms
 #+END_SRC
 
-#+RESULTS:
-: 2bfc2aea0c5d951ac7d5dca2c992ac15edf62b5533fc760805e6b87380547929
 
 ** Bulding Instruction
 
 To build the project run from your shell:
 
-#+BEGIN_SRC sh :results raw drawer :dir /ssh:user@localhost#4022:/home/user/graph-algorithms
+#+BEGIN_SRC sh :dir /ssh:user@localhost#4022:/home/user/graph-algorithms
 waf configure
 waf build
 #+END_SRC
-
-#+RESULTS:
-:RESULTS:
-Setting top to                           : /home/user/graph-algorithms
-Setting out to                           : /home/user/graph-algorithms/build
-Checking for 'clangxx' (C++ compiler)    : not found
-Checking for 'gxx' (C++ compiler)        : /usr/bin/g++
-Checking for library gtest               : yes
-Checking for library tcmalloc            : yes
-Checking for library profiler            : yes
-'configure' finished successfully (0.391s)
-Waf: Entering directory `/home/user/graph-algorithms/build'
-Waf: Leaving directory `/home/user/graph-algorithms/build'
-'build' finished successfully (0.007s)
-:END:
 
 ** Usage
