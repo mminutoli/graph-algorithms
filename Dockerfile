@@ -4,12 +4,14 @@ MAINTAINER [Marco Minutoli <marco.minutoli@wsu.edu>]
 
 ENV container docker
 
-# Update the system.
-RUN dnf -y update && dnf clean all
+# Update the system and install dependencies.
+RUN dnf -y update && \
+    dnf install -y openssh-server passwd && \
+    dnf install -y waf gcc gcc-c++ gdb glibc-devel valgrind gtest-devel gperftools-devel && \
+    dnf clean all
 
 # Install systemd and remove things that are not needed.
-RUN dnf -y install systemd && dnf clean all;                                    \
-    (cd /lib/systemd/system/sysinit.target.wants/;                              \
+RUN (cd /lib/systemd/system/sysinit.target.wants/;                              \
     for i in *; do [ $i == systemd-tmpfiles-setup.service ] && rm -f $i; done); \
     rm -f /lib/systemd/system/multi-user.target.wants/*;                        \
     rm -f /etc/systemd/system/*.wants/*;                                        \
@@ -25,35 +27,18 @@ RUN dnf -y install systemd && dnf clean all;                                    
 VOLUME [ "/sys/fs/cgroup", "/tmp", "/run" ]
 
 # Install openssh server.
-RUN dnf install -y openssh-server passwd && dnf clean all                       && \
-    systemctl enable sshd.service                                               && \
+RUN systemctl enable sshd.service                                               && \
     sed -i '/^session.*pam_loginuid.so/s/^session/# session/' /etc/pam.d/sshd
 
 EXPOSE 22
 
-# Set root password
-RUN echo "root:root" | chpasswd
-
-# Create user.
-RUN useradd user && echo "user:user" | chpasswd
+# Root password and User creat\ion
+RUN (echo "root:root" | chpasswd); \
+    useradd user && echo "user:user" | chpasswd
 
 # Setup ssh access.
 ENV SSHDIR /home/user/.ssh
-RUN mkdir -p ${SSHDIR}
-
-RUN chmod -R 600 ${SSHDIR}* && \
+RUN mkdir -p ${SSHDIR} && chmod -R 600 ${SSHDIR} && \
     chown -R ${USER}:${USER} ${SSHDIR}
-
-# Installing dependencies
-RUN dnf install -y              \
-        waf                     \
-        gcc                     \
-        gcc-c++                 \
-        gdb                     \
-        glibc-devel             \
-        valgrind                \
-        gtest-devel             \
-        gperftools-devel        \
-        &&  dnf clean all
 
 CMD ["/usr/sbin/init"]
