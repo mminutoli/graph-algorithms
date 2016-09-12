@@ -4,25 +4,47 @@
 
 ** Building the Docker Development Environment
 
-The first you need to build the development container.
+We decided to adopt a docker to have a standardized development platform.  If
+you are not familiar with it, you can find good tutorials in the [[https://docs.docker.com][Docker
+Documentation]].  In the case you are a Mac Os X or a Windows user you will need
+some extra step to create a virtual machine where docker containers will run.
+All the additional steps are well described in the [[https://docs.docker.com][Docker Documentation]], so
+please refer to that.
 
+The first step to build the development environment is to build its docker
+image running the following command from the project root directory.
 #+BEGIN_SRC sh
 docker build --rm -q -t graph-algorithms .
 #+END_SRC
 
-To run the container:
+Our development container is based on the /fedora:latest/ container.  The
+container uses systemd and it starts a ssh daemon so that you can connect to it
+once the container is running.  After creation the development container has to
+users root and user.  The password is equal to the user name for both.
+
+The following command run the container and mount the source code directory
+inside the user home directory.  It also binds the host port 4022 to the port 22
+of the container.
 #+BEGIN_SRC sh
 docker run -d -v $(pwd):/home/user/graph-algorithms:Z -v /sys/fs/cgroup:/sys/fs/cgroup:ro -p 4022:22 graph-algorithms
 #+END_SRC
 
+Once the container is running you only need to ssh to localhost at port 4022 to
+compile and run the code while you can still make changes from your favorite
+editor on the host.
 
-** Bulding Instruction
+** Building Instruction
 
-To build the project run from your shell:
+Once you are connected to the development container, you can build the project
+from running the following commands from the graph-algorithms directory in the
+user home directory of development container.
 
 #+BEGIN_SRC sh :dir /ssh:user@localhost#4022:/home/user/graph-algorithms
 waf configure
 waf build
 #+END_SRC
+
+Please note that the configure line is needed only the first time or eventually
+when you need to reconfigure.
 
 ** Usage
